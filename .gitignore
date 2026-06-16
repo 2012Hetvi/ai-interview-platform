@@ -1,0 +1,22 @@
+# Virtual Environments
+venv/
+.venv/
+backend/venv/
+backend/.venv/
+
+# Node modules and build output
+frontend/node_modules/
+frontend/dist/
+
+# Environment files
+.env
+backend/.env
+frontend/.env
+
+# Python cache
+__pycache__/
+*.pyc
+
+# OS files
+.DS_Store
+Thumbs.db
