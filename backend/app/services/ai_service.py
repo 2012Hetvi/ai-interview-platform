@@ -7,13 +7,12 @@ result reliably (score, feedback, verdict, etc).
 """
 import json
 import re
-from anthropic import Anthropic
+from groq import Groq
 
 from app.config import settings
 
-client = Anthropic(api_key=settings.ANTHROPIC_API_KEY)
-MODEL = settings.ANTHROPIC_MODEL
-
+client = Groq(api_key=settings.GROQ_API_KEY)
+MODEL = settings.GROQ_MODEL
 
 def _extract_json(text: str) -> dict:
     """Claude sometimes wraps JSON in prose/fences - pull the object out safely."""
@@ -26,15 +25,15 @@ def _extract_json(text: str) -> dict:
 
 
 def _ask_json(system_prompt: str, user_prompt: str, max_tokens: int = 1024) -> dict:
-    response = client.messages.create(
+    response = client.chat.completions.create(
         model=MODEL,
         max_tokens=max_tokens,
-        system=system_prompt,
-        messages=[{"role": "user", "content": user_prompt}],
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
     )
-    raw_text = "".join(
-        block.text for block in response.content if block.type == "text"
-    )
+    raw_text = response.choices[0].message.content
     return _extract_json(raw_text)
 
 
